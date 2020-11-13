@@ -20,6 +20,12 @@ unused_headers = (
 )
 
 
+@app.route("/apply-cors/<path:url>", methods=["OPTIONS"])
+def cors_options(url):
+    logging.info(f"OPTIONS call, url is: {url}")
+    return jsonify()
+
+
 @app.route("/apply-cors/<path:url>", methods=["POST"])
 def cors_post(url):
     try:
@@ -28,9 +34,11 @@ def cors_post(url):
             url = url.replace(":/", "://")
         request_headers = dict(request.headers)
         headers = {k: v for k, v in request_headers.items() if k not in unused_headers}
-        data = json.dumps(request.json)
-
-        resp = requests.post(url, data=data, headers=headers)
+        try:
+            data = json.dumps(request.json)
+            resp = requests.post(url, data=data, headers=headers)
+        except Exception:
+            resp = requests.post(url, headers=headers)
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
         logging.error(e)
@@ -45,9 +53,11 @@ def cors_get(url):
             url = url.replace(":/", "://")
         request_headers = dict(request.headers)
         headers = {k: v for k, v in request_headers.items() if k not in unused_headers}
-        data = json.dumps(request.json)
-
-        resp = requests.get(url, data=data, headers=headers)
+        try:
+            data = json.dumps(request.json)
+            resp = requests.get(url, data=data, headers=headers)
+        except Exception:
+            resp = requests.get(url, headers=headers)
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
         logging.error(e)
