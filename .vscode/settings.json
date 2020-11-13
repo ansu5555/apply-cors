@@ -1,0 +1,4 @@
+{
+    "python.pythonPath": "/home/users011/Projects/apply-cors/.venv/bin/python3.7",
+    "python.formatting.provider": "black"
+}
